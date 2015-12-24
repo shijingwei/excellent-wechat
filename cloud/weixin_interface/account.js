@@ -2,6 +2,7 @@
 * 后台用户
 *
 */
+var tokenjs = require('cloud/weixin_interface/token.js');
 
 function register_page(req,res) {
   res.render('weixin/register',{});
@@ -25,7 +26,9 @@ function register(req,res) {
       weixinAccount.set('owner',user);
       weixinAccount.set('app_id',appid);
       weixinAccount.set('app_secret',secret);
-      weixinAccount.save();
+
+      //初次初始化 access_token
+      weixinAccount.save(null,{success:function(account){tokenjs.initlize(appid,secret);}});
       res.render('register');
     },
     error: function(user, error) {
@@ -35,6 +38,8 @@ function register(req,res) {
     }
   });
 }
+
+//增加微信账号
 
 // 查看账号信息
 function detail() {

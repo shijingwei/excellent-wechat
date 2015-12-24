@@ -2,7 +2,7 @@
 * 微信 token
 *
 */
-var constants = require('wx_constants.js');
+var constants = require('cloud/weixin_interface/wx_constants.js');
 
 
 /*
@@ -28,7 +28,7 @@ function initlize(appid,secret) {
         if(accounts && accounts.length ==1) {
           var account = accounts[0];
           var resObject = JSON.parse(httpResponse.text);
-          accounts.set('access_token',resObject.access_token);
+          account.set('access_token',resObject.access_token);
           account.save();
         }
       },

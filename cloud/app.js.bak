@@ -1,9 +1,5 @@
 var express = require('express');
-var path = require('path');
-var bodyParser = require('body-parser');
-var methodOverride = require('method-override')
 var AV = require('leanengine');
-
 var xml2js = require('xml2js');
 var weixin = require('cloud/weixin.js');
 var account = require('cloud/weixin_interface/account.js');
@@ -45,20 +41,11 @@ var app = express();
 // App 全局配置
 app.set('views','cloud/views');   // 设置模板目录
 app.set('view engine', 'ejs');    // 设置 template 引擎
-app.use('/static', express.static('public'));
-//app.use(express.bodyParser());    // 读取请求 body 的中间件
+app.use(express.bodyParser());    // 读取请求 body 的中间件
 app.use(xmlBodyParser);
 
 // 加载 cookieSession 以支持 AV.User 的会话状态
-app.use(AV.Cloud.CookieSession({ secret: 'scret', maxAge: 3600000, fetchUser: true }));
-
-// 强制使用 https
-app.enable('trust proxy');
-app.use(AV.Cloud.HttpsRedirect());
-
-app.use(methodOverride('_method'))
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(AV.Cloud.CookieSession({maxAge: 3600000}));
 
 app.get('/login', function(req, res) {
   // 渲染登录页面
