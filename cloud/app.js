@@ -1,6 +1,7 @@
 var express = require('express');
 var xml2js = require('xml2js');
 var weixin = require('cloud/weixin.js');
+var account = require('cloud/weixin_interface/account.js');
 var utils = require('express/node_modules/connect/lib/utils');
 
 // 解析微信的 xml 数据
@@ -21,7 +22,7 @@ var xmlBodyParser = function (req, res, next) {
   var buf = '';
   req.setEncoding('utf8');
   req.on('data', function(chunk){ buf += chunk });
-  req.on('end', function(){  
+  req.on('end', function(){
     xml2js.parseString(buf, function(err, json) {
       if (err) {
           err.status = 400;
@@ -70,6 +71,10 @@ app.post('/weixin', function(req, res) {
     return res.send(xml);
   });
 })
+
+//注册用户
+app.get('/register_page',account.register_page);
+app.post('/register',account.register);
 
 // 最后，必须有这行代码来使 express 响应 HTTP 请求
 app.listen();
