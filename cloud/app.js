@@ -3,6 +3,11 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override')
 var AV = require('leanengine');
+var APP_ID = process.env.LC_APP_ID || 'gc7kzpln5airnv3c8wt4bof1kwxyifojctfy5yz28luykpji'; // 你的 app id
+var APP_KEY = process.env.LC_APP_KEY || '5yau1c8h4q4es3t5ibrxmz9tpjdllf1gekdrosz1blwb6kyn'; // 你的 app key
+var MASTER_KEY = process.env.LC_APP_MASTER_KEY || 'bi85xoq39g92v7y4mjuelm66hgmn6opjb50enwfknj39co5e'; // 你的 master key
+
+AV.initialize(APP_ID, APP_KEY, MASTER_KEY);
 
 var xml2js = require('xml2js');
 var weixin = require('cloud/weixin.js');
@@ -56,7 +61,7 @@ app.use(AV.Cloud.CookieSession({ secret: 'scret', maxAge: 3600000, fetchUser: tr
 app.enable('trust proxy');
 app.use(AV.Cloud.HttpsRedirect());
 
-app.use(methodOverride('_method'))
+//app.use(methodOverride('_method'))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -77,16 +82,7 @@ app.post('/login', function(req, res) {
   });
 });
 //查看用户profile信息
-app.get('/profile', function(req, res) {
-  // 判断用户是否已经登录
-  if (req.AV.user) {
-    // 如果已经登录，发送当前登录用户信息。
-    res.send(req.AV.user);
-  } else {
-    // 没有登录，跳转到登录页面。
-    res.redirect('/login');
-  }
-});
+app.get('/profile', account.profile);
 
 //调用此url来登出帐号
 app.get('/logout', function(req, res) {
@@ -127,6 +123,7 @@ app.post('/weixin', function(req, res) {
 //注册用户
 app.get('/register',function(req, res) {res.render('weixin/register');});
 app.post('/register',account.register);
+app.post('/profile',account.profile);
 
 // 最后，必须有这行代码来使 express 响应 HTTP 请求
 app.listen();
