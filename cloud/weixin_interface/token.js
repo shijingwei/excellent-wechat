@@ -43,4 +43,24 @@ function initlize(appid,secret) {
   });
 }
 
+function refresh(userid){
+  var user = AV.Object.createWithoutData('_User',userid);
+  var query = new AV.Query('WeixinAccount');
+  query.equalTo('owner',user);
+  query.find({
+    success:function(accounts){
+      account.forEach(function(account){
+        refreshSingle()
+      });
+    }
+  });
+}
+
+function refreshSingle(account){
+  var appid =  account.get('app_id');
+  var secret = account.get('app_secret');
+
+}
+
 exports.initlize = initlize;
+exports.refresh = refresh;

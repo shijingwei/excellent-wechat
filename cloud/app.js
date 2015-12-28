@@ -45,6 +45,10 @@ var xmlBodyParser = function (req, res, next) {
   });
 };
 
+var userSessionFilter = function(req,res,next){
+
+}
+
 var app = express();
 
 // App 全局配置
@@ -74,7 +78,7 @@ app.post('/login', function(req, res) {
   AV.User.logIn(req.body.username, req.body.password).then(function(user) {
     //登录成功，AV.Cloud.CookieSession 会自动将登录用户信息存储到 cookie
     //跳转到profile页面。
-    console.log('signin successfully: %j', user);
+    //console.log('signin successfully: %j', user);
     res.redirect('/profile');
   },function(error) {
     //登录失败，跳转到登录页面
@@ -120,10 +124,11 @@ app.post('/weixin', function(req, res) {
   });
 })
 
-//注册用户
+//注册微信管理账号
 app.get('/register',function(req, res) {res.render('weixin/register');});
 app.post('/register',account.register);
 app.post('/profile',account.profile);
+app.post('/addAccount',account.addAccount);
 
 // 最后，必须有这行代码来使 express 响应 HTTP 请求
 app.listen();

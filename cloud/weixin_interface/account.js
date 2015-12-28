@@ -1,5 +1,5 @@
 /**
-* 后台用户
+* 后台微信账号管理
 *
 */
 var tokenjs = require('cloud/weixin_interface/token.js');
@@ -17,14 +17,15 @@ function register(req,res) {
 
   user.signUp(null, {
     success: function(user) {
+      /*
       // 注册成功，可以使用了.
       var weixinAccount = AV.Object.new('WeixinAccount');
       weixinAccount.set('owner',user);
       weixinAccount.set('app_id',appid);
       weixinAccount.set('app_secret',secret);
-
-      //初次初始化 access_token
       weixinAccount.save(null,{success:function(account){tokenjs.initlize(appid,secret);}});
+      */
+      saveWeixinAccount(user,appid,secret);
       res.redirect('/profile');
     },
     error: function(user, error) {
@@ -59,16 +60,31 @@ function profile(req,res){
 }
 
 //增加微信账号
-function addWeixinAccount(req,res){
+function addAccount(req,res){
+  var appid = req.body.appid;
+  var secret = req.body.secret;
 
+  if (req.AV.user){
+    var user = AV.Object.createWithoutData('_User',req.AV.user.id);
+    saveWeixinAccount(user,appid,secret);
+    res.redirect('/profile');
+  } else {
+    res.redirect('/login');
+  }
 }
 
+//private 保存Account
+function saveWeixinAccount(user,appid,secret){
+  var weixinAccount = AV.Object.new('WeixinAccount');
+  weixinAccount.set('owner',user);
+  weixinAccount.set('app_id',appid);
+  weixinAccount.set('app_secret',secret);
 
-// 查看账号信息
-function detail() {
-
+  //初次初始化 access_token
+  weixinAccount.save(null,{success:function(account){tokenjs.initlize(appid,secret);}});
 }
+
 
 exports.profile = profile;
 exports.register = register;
-exports.detail = detail;
+exports.addAccount = addAccount;
