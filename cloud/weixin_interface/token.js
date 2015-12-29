@@ -43,23 +43,55 @@ function initlize(appid,secret) {
   });
 }
 
-function refresh(userid){
-  var user = AV.Object.createWithoutData('_User',userid);
+function refreshSingleById(accountid){
   var query = new AV.Query('WeixinAccount');
-  query.equalTo('owner',user);
-  query.find({
-    success:function(accounts){
-      account.forEach(function(account){
-        refreshSingle()
-      });
+  query.get(accountid, {
+    success:function(account){
+      refreshSingle(account);
     }
   });
 }
 
+function refreshTimer(){
+  var query = new AV.Query('WeixinAccount');
+  var date = new Date();
+  date.setTime(date.getTime()-72*3600*100);
+  query.lessThen('updatedAt',date);
+  query.limit(100);
+  query.find({
+    success:function(accounts){
+      account.forEach(function(account){
+        refreshSingle(account);
+      });
+
+      if(accounts.length==100){
+        refreshTimer();
+      }
+    }
+  });
+}
+
+
+//刷新单个微信公众号
 function refreshSingle(account){
   var appid =  account.get('app_id');
   var secret = account.get('app_secret');
-
+  AV.Cloud.httpRequest({
+  url: constants.URL_ACCESS_TOKEN,
+  params :{
+    grant_type:'client_credential',
+    appid : appid,
+    secret : secret
+  },
+  success: function(httpResponse) {
+    var resObject = JSON.parse(httpResponse.text);
+    account.set('access_token',resObject.access_token);
+    account.save();
+  },
+  error: function(httpResponse) {
+    console.error('Request failed with response code ' + httpResponse.status);
+  }
+  });
 }
 
 exports.initlize = initlize;
