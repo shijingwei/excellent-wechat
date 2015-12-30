@@ -5,13 +5,6 @@
 var constants = require('cloud/weixin_interface/wx_constants.js');
 
 
-/*
-轮询所有用户刷新 Token
-*/
-function refresh() {
-
-}
-
 function initlize(appid,secret) {
   AV.Cloud.httpRequest({
   url: constants.URL_ACCESS_TOKEN,
@@ -52,6 +45,9 @@ function refreshSingleById(accountid){
   });
 }
 
+/*
+轮询所有用户刷新 Token
+*/
 function refreshTimer(){
   var query = new AV.Query('WeixinAccount');
   var date = new Date();
@@ -95,4 +91,5 @@ function refreshSingle(account){
 }
 
 exports.initlize = initlize;
-exports.refresh = refresh;
+exports.refreshTimer = refreshTimer;
+exports.refreshSingleById = refreshSingleById;

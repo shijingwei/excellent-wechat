@@ -3,9 +3,9 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override')
 var AV = require('leanengine');
-var APP_ID = process.env.LC_APP_ID || 'gc7kzpln5airnv3c8wt4bof1kwxyifojctfy5yz28luykpji'; // 你的 app id
-var APP_KEY = process.env.LC_APP_KEY || '5yau1c8h4q4es3t5ibrxmz9tpjdllf1gekdrosz1blwb6kyn'; // 你的 app key
-var MASTER_KEY = process.env.LC_APP_MASTER_KEY || 'bi85xoq39g92v7y4mjuelm66hgmn6opjb50enwfknj39co5e'; // 你的 master key
+var APP_ID =  'gc7kzpln5airnv3c8wt4bof1kwxyifojctfy5yz28luykpji'; // 你的 app id
+var APP_KEY = '5yau1c8h4q4es3t5ibrxmz9tpjdllf1gekdrosz1blwb6kyn'; // 你的 app key
+var MASTER_KEY = 'bi85xoq39g92v7y4mjuelm66hgmn6opjb50enwfknj39co5e'; // 你的 master key
 
 AV.initialize(APP_ID, APP_KEY, MASTER_KEY);
 
