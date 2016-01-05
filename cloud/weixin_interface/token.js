@@ -48,7 +48,7 @@ function refreshSingleById(accountid){
 /*
 轮询所有用户刷新 Token
 */
-function refreshTimer(){
+function refreshTimer(req,res){
   var query = new AV.Query('WeixinAccount');
   var date = new Date();
   date.setTime(date.getTime()-72*3600*100);

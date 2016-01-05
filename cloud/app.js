@@ -69,6 +69,18 @@ app.use(AV.Cloud.HttpsRedirect());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.get('/remoteip',function(req,res){
+  console.log(req.headers.x-real-ip);
+  var remoteaddress = new AV.Object('RemoteAddress');
+  var ips = req.ips;
+  var ip = req.headers.x-real-ip?req.headers.x-real-ip:req.ip;
+
+  remoteaddress.set('IPAddress',ip);
+  remoteaddress.save();
+  res.send('Success');
+
+});
+
 app.get('/login', function(req, res) {
   // 渲染登录页面
   res.render('login');
