@@ -1,6 +1,7 @@
 var crypto = require('crypto');
 var config = require('cloud/config/weixin.js');
 var debug = require('debug')('AV:weixin');
+var wx_message = require('cloud/weixin_interface/wx_message.js');
 
 exports.exec = function(params, cb) {
   if (params.signature) {
@@ -26,6 +27,7 @@ var checkSignature = function(appid,signature, timestamp, nonce, echostr, cb) {
 
 // 接收普通消息
 var receiveMessage = function(msg, cb) {
+  wx_message.save(msg.xml);
   var result = {
     xml: {
       ToUserName: msg.xml.FromUserName[0],

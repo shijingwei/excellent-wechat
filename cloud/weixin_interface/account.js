@@ -84,6 +84,10 @@ function saveWeixinAccount(user,appid,secret){
   weixinAccount.save(null,{success:function(account){tokenjs.initlize(appid,secret);}});
 }
 
+//通过appid获得微信账号信息
+function geWXAccountByAppId(appid){
+  
+}
 
 exports.profile = profile;
 exports.register = register;

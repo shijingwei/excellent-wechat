@@ -65,7 +65,7 @@ function refreshTimer(req,res){
       }
     }
   });
-  res.send('Success');
+  //res.send('Success');
 }
 
 

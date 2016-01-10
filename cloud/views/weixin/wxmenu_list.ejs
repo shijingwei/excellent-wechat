@@ -22,13 +22,10 @@
         <tbody>
           <% accounts.forEach(function(account){%>
           <tr>
-            <input type="hidden" name="id" value="<%=account.id %>"/>
-            <input type="hidden" name="app_id" value="<%=account.get('app_id') %>"/>
-            <input type="hidden" name="app_secret" value="<%=account.get('app_secret') %>"/>
-            <td><a href="#" class="itemlink"><%=account.get('app_id') %></a></td>
+            <td><%=account.get('app_id') %></td>
             <td>http://excellent.leanapp.cn/weixin/<%=account.get('app_id') %></td>
             <td><%=account.id %></td>
-            <td><a href="wxmenu?appid=<%=account.get('app_id') %>&secret=<%=account.get('app_secret') %>&token=<%=account.get('access_token') %>&id=<%=account.id %>">菜单管理</a></td>
+            <td><a href="wxmenu?appid=<%=account.get('app_id') %>&secret=<%=account.get('app_secret') %>&token=<%=account.get('app_secret') %>&id=<%=account.id %>"">菜单管理</a></td>
           </tr>
           <% }) %>
         </tbody>
@@ -45,9 +42,8 @@
           </div>
           <div class="modal-body">
             <form class="form-signin" method="post" action="addAccount" id="addAccount">
-              <input type="hidden" id="objectid" name="id" />
               <label for="AppId" class="sr-only">AppID</label>
-              <input type="text" id="appid" name="appid" class="form-control" placeholder="AppID" required="required"/>
+              <input type="text" id="AppId" name="appid" class="form-control" placeholder="AppID" required="required"/>
               <label for="secret" class="sr-only">Secret</label>
               <input type="text" id="secret" name="secret" class="form-control" placeholder="Secret" required="required"/>
             </form>
@@ -65,17 +61,6 @@
     $('#saveAccount').click(function(){
       $('#addAccount').submit();
       $('#myModal').modal('hide');
-      $('#objectid').value('');
-    });
-    $('.itemlink').click(function(){
-      var parentdom = $(this).parent().parent();
-      var id = $('input[name="id"]',parentdom).attr('value');
-      var app_id = $('input[name="app_id"]',parentdom).attr('value');
-      var app_secret = $('input[name="app_secret"]',parentdom).attr('value');
-      $('#objectid').val(id);
-      $('#appid').val(app_id);
-      $('#secret').val(app_secret);
-      $('#myModal').modal('show');
     });
   });
   </script>

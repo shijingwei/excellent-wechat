@@ -16,6 +16,8 @@ var xml2js = require('xml2js');
 var weixin = require('cloud/weixin.js');
 var account = require('cloud/weixin_interface/account.js');
 var utils = require('express/node_modules/connect/lib/utils');
+var wxmenu = require('cloud/weixin_interface/wx_menu.js');
+var wxmessage = require('cloud/weixin_interface/wx_message.js');
 
 // 解析微信的 xml 数据
 var xmlBodyParser = function (req, res, next) {
@@ -85,9 +87,6 @@ app.get('/remoteip',function(req,res){
 
 });
 
-//刷新Token
-//app.get('/refresh',token.refreshTimer);
-
 app.get('/login', function(req, res) {
   // 渲染登录页面
   res.render('login');
@@ -113,36 +112,6 @@ app.get('/logout', function(req, res) {
   AV.User.logOut();
   res.redirect('/profile');
 });
-
-/*
-app.get('/weixin', function(req, res) {
-  console.log('weixin req.originalUrl:',req.originalUrl);
-  console.log('weixin req:', req.query);
-  var params = req.query;
-  weixin.exec(params, function(err, data) {
-    if (err) {
-      return res.send(err.code || 500, err.message);
-    }
-    return res.send(data);
-  });
-});
-
-app.post('/weixin', function(req, res) {
-  console.log('weixin req.originalUrl:',req.originalUrl);
-  console.log('weixin req:', req.body);
-  var params = req.body;
-  weixin.exec(params, function(err, data) {
-    if (err) {
-      return res.send(err.code || 500, err.message);
-    }
-    var builder = new xml2js.Builder();
-    var xml = builder.buildObject(data);
-    console.log('res:', data)
-    res.set('Content-Type', 'text/xml');
-    return res.send(xml);
-  });
-});
-*/
 
 app.get('/weixin/:appid', function(req, res) {
   console.log('weixin req.originalUrl:',req.originalUrl);
@@ -179,6 +148,16 @@ app.get('/register',function(req, res) {res.render('weixin/register');});
 app.post('/register',account.register);
 app.post('/profile',account.profile);
 app.post('/addAccount',account.addAccount);
+
+//菜单管理
+app.get('/wxmenu',function(req,res){ res.render('weixin/wxmenu');});
+app.post('/wxmenu',wxmenu.createMenu);
+
+//Test
+//刷新Token
+//app.get('/refresh',token.refreshTimer);
+//Message
+//app.get('/message',function(req,res){ var params = req.query; wxmessage.save(params);res.send('success');});
 
 // 最后，必须有这行代码来使 express 响应 HTTP 请求
 app.listen();
