@@ -70,10 +70,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/remoteip',function(req,res){
-  console.log(req.headers.x-real-ip);
+  console.log(req.headers['x-real-ip']);
   var remoteaddress = new AV.Object('RemoteAddress');
   var ips = req.ips;
-  var ip = req.headers.x-real-ip?req.headers.x-real-ip:req.ip;
+  var ip = req.headers['x-real-ip']?req.headers['x-real-ip']:req.ip;
 
   remoteaddress.set('IPAddress',ip);
   remoteaddress.save();
