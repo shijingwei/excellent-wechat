@@ -85,10 +85,20 @@ function saveWeixinAccount(user,appid,secret){
 }
 
 //通过appid获得微信账号信息
-function geWXAccountByAppId(appid){
-  
+function geWXAccountByAppId(appid,cb){
+  if(!cb){
+    return;
+  }
+  var query = new AV.Query('WeixinAccount');
+  query.equalTo('app_id',appid);
+  query.find({success:function(accounts){
+    if(accounts.length){
+      cb(accounts);
+    }
+  }});
 }
 
 exports.profile = profile;
 exports.register = register;
 exports.addAccount = addAccount;
+exports.geWXAccountByAppId = geWXAccountByAppId;

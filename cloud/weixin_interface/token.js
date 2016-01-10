@@ -51,7 +51,7 @@ function refreshSingleById(accountid){
 function refreshTimer(req,res){
   var query = new AV.Query('WeixinAccount');
   var date = new Date();
-  date.setTime(date.getTime()-72*3600*100);
+  date.setTime(date.getTime()-7200000);
   query.lessThan('updatedAt',date);
   query.limit(100);
   query.find({

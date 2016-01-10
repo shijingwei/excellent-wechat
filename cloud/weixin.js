@@ -27,7 +27,7 @@ var checkSignature = function(appid,signature, timestamp, nonce, echostr, cb) {
 
 // 接收普通消息
 var receiveMessage = function(msg, cb) {
-  wx_message.save(msg.xml);
+  wx_message.save(msg.appid,msg.xml);
   var result = {
     xml: {
       ToUserName: msg.xml.FromUserName[0],
