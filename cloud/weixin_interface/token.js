@@ -52,11 +52,11 @@ function refreshTimer(req,res){
   var query = new AV.Query('WeixinAccount');
   var date = new Date();
   date.setTime(date.getTime()-72*3600*100);
-  query.lessThen('updatedAt',date);
+  query.lessThan('updatedAt',date);
   query.limit(100);
   query.find({
     success:function(accounts){
-      account.forEach(function(account){
+      accounts.forEach(function(account){
         refreshSingle(account);
       });
 
@@ -65,6 +65,7 @@ function refreshTimer(req,res){
       }
     }
   });
+  res.send('Success');
 }
 
 

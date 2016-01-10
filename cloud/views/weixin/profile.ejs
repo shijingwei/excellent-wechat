@@ -15,6 +15,7 @@
       <table class="table table-striped">
         <thead>
           <th>AppID</th>
+          <th>URL</th>
           <th>Token</th>
           <th>Operate</th>
         </thead>
@@ -22,7 +23,8 @@
           <% accounts.forEach(function(account){%>
           <tr>
             <td><%=account.get('app_id') %></td>
-            <td><%=account.get('app_secret') %></td>
+            <td>http://excellent.leanapp.cn/weixin/<%=account.get('app_id') %></td>
+            <td><%=account.id %></td>
             <td></td>
           </tr>
           <% }) %>
