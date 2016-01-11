@@ -76,7 +76,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 //获得办公室IP地址
 app.get('/remoteip',function(req,res){
-  console.log(req.headers['x-real-ip']);
+  //console.log(req.headers['x-real-ip']);
   var remoteaddress = new AV.Object('RemoteAddress');
   var ips = req.ips;
   var ip = req.headers['x-real-ip']?req.headers['x-real-ip']:req.ip;
@@ -96,7 +96,7 @@ app.post('/login', function(req, res) {
   AV.User.logIn(req.body.username, req.body.password).then(function(user) {
     //登录成功，AV.Cloud.CookieSession 会自动将登录用户信息存储到 cookie
     //跳转到profile页面。
-    console.log('signin successfully: %j', user);
+    //console.log('signin successfully: %j', user);
     res.redirect('/profile');
   },function(error) {
     //登录失败，跳转到登录页面
@@ -114,8 +114,8 @@ app.get('/logout', function(req, res) {
 });
 
 app.get('/weixin/:appid', function(req, res) {
-  console.log('weixin req.originalUrl:',req.originalUrl);
-  console.log('weixin req:', req.query);
+  //console.log('weixin req.originalUrl:',req.originalUrl);
+  //console.log('weixin req:', req.query);
   var params = req.query;
   params.appid = req.params.appid;
   weixin.exec(params, function(err, data) {
@@ -127,8 +127,8 @@ app.get('/weixin/:appid', function(req, res) {
 });
 
 app.post('/weixin/:appid', function(req, res) {
-  console.log('weixin req.originalUrl:',req.originalUrl);
-  console.log('weixin req:', req.body);
+  //console.log('weixin req.originalUrl:',req.originalUrl);
+  //console.log('weixin req:', req.body);
   var params = req.body;
   params.appid = req.params.appid;
   weixin.exec(params, function(err, data) {
@@ -137,7 +137,7 @@ app.post('/weixin/:appid', function(req, res) {
     }
     var builder = new xml2js.Builder();
     var xml = builder.buildObject(data);
-    console.log('res:', data)
+    //console.log('res:', data)
     res.set('Content-Type', 'text/xml');
     return res.send(xml);
   });

@@ -4,8 +4,8 @@
 var constants = require('cloud/weixin_interface/wx_constants.js');
 
 exports.getAndSave = function(parameters) {
-  var app_id = parameters.appid;
-  //console.log(__filename,parameters);
+  var app_id = parameters.app_id;
+  console.log(__filename,parameters);
 
   AV.Cloud.httpRequest({
     url: constants.URL_USER_INFO,
