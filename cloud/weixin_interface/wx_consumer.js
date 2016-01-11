@@ -2,16 +2,13 @@
 * 微信终端用户
 */
 var constants = require('cloud/weixin_interface/wx_constants.js');
+var account = require('cloud/weixin_interface/account.js');
 
-exports.getAndSave = function(parameters) {
+function getUserInfo(parameters,consumer,cb){
+  //console.log(__filename,parameters);
   var app_id = parameters.app_id;
   var access_token_val = parameters.access_token;
   var openid_val = parameters.openid;
-  //console.log(__filename,parameters);
-  getUserInfo(access_token_val,openid_val,save);
-
-}
-function getUserInfo(access_token_val,openid_val,consumer,cb){
   AV.Cloud.httpRequest({
     url: constants.URL_USER_INFO,
     params :{
@@ -34,11 +31,6 @@ function getUserInfo(access_token_val,openid_val,consumer,cb){
   });
 }
 
-exports.getAndUpdate = function(parameters) {
-  var app_id = parameters.app_id;
-  findByOpenidAndAppid();
-}
-
 function save(params,appid,customer){
   if(!customer){
     customer = new AV.Object('WX_consumer');
@@ -57,6 +49,36 @@ function save(params,appid,customer){
   }
 }
 
-function findByOpenidAndAppid(){
-  
+//如果用户存在并且没有unionid,则更新，如果用户不存在则新建
+function saveOrUpdateFrom(openid,app_id){
+  var query = new AV.Query('WX_consumer');
+  query.equalTo('openid',openid);
+  query.equalTo('app_id',app_id);
+  query.find({
+    success:function(customers){
+      //console.log(__filename,customers);
+      var customer=null;
+      if(customers.length>0){
+        customer = customers[0];
+        var unionid = customer.get('unionid');
+        if(unionid){
+          return;
+        }
+      }
+      account.geWXAccountByAppId(app_id,function(accounts){
+        var wxaccount = accounts[0];
+        var access_token = wxaccount.get('access_token');
+        var params = {};
+        params.openid= openid;
+        params.access_token = access_token;
+        params.app_id=app_id;
+        save(params,app_id,customer);
+      });
+    },
+    error:function(err,customers){
+      console.error(__filename,err);
+    }
+  });
 }
+
+exports.saveOrUpdateFrom = saveOrUpdateFrom;
