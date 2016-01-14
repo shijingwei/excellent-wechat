@@ -3,19 +3,21 @@
 */
 var wxpage = require('cloud/weixin_interface/wx_page.js');
 var wxaccount = require('cloud/weixin_interface/account.js');
+var logfile = require('cloud/utils/logfile.js');
 
 exports.product_req = function(req,res){
   console.log(__filename,req.query);
-  console.log(__filename,req);
   var app_id = req.query.appid;
-  var redirect_uri = ""; //req.query.redirecturi;
+  var redirect_uri = encodeURI(req.protocol+'://'+req.hostname+req.originalUrl); //req.query.redirecturi;
+  console.log(__filename,redirect_uri);
   wxpage.get_authorize(app_id,redirect_uri);
   res.send('');
 }
 
 //redirect_uri/?code=CODE&state=STATE
 exports.product =  function(req,res){
-  console.log(__filename,req.query);
+  console.log(__filename,req.baseUrl);
+  //logfile.log(new Buffer(req.toString()));
   var code = req.query.code;
   var app_id = req.query.appid;
   wxaccount.geWXAccountByAppId(app_id,function(accounts){
