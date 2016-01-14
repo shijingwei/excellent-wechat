@@ -6,34 +6,17 @@ var constants = require('cloud/weixin_interface/wx_constants.js');
 
 
 function initlize(appid,secret) {
-  AV.Cloud.httpRequest({
-  url: constants.URL_ACCESS_TOKEN,
-  params :{
-    grant_type:'client_credential',
-    appid : appid,
-    secret : secret
-  },
-  success: function(httpResponse) {
     var query = new AV.Query('WeixinAccount');
     query.equalTo('app_id',appid);
     query.find({
       success: function(accounts){
         if(accounts && accounts.length ==1) {
           var account = accounts[0];
-          var resObject = JSON.parse(httpResponse.text);
-          account.set('access_token',resObject.access_token);
-          account.save();
+          refreshSingle(account);
         }
       },
-      error: function(error){
-
-      }
-    })
-  },
-  error: function(httpResponse) {
-    console.error('Request failed with response code ' + httpResponse.status);
-  }
-  });
+      error: function(error){}
+    });
 }
 
 function refreshSingleById(accountid){
@@ -65,7 +48,7 @@ function refreshTimer(req,res){
       }
     }
   });
-  //res.send('Success');
+  res.send('Success');
 }
 
 
@@ -82,12 +65,51 @@ function refreshSingle(account){
   },
   success: function(httpResponse) {
     var resObject = JSON.parse(httpResponse.text);
-    account.set('access_token',resObject.access_token);
-    account.save();
+    if(resObject.access_token){
+      account.set('access_token',resObject.access_token);
+      refreshJsapi(resObject.access_token,function(jsapi_ticket){
+        if(jsapi_ticket){
+          account.set('ticket',jsapi_ticket);
+          account.save();
+        }
+      });
+      account.save();
+    }else{
+      if(resObject.errmsg){
+        console.error(resObject.errmsg);
+      }
+    }
   },
   error: function(httpResponse) {
     console.error('Request failed with response code ' + httpResponse.status);
   }
+  });
+}
+
+function refreshJsapi(access_tokenval,cb){
+  if(!cb){
+    return;
+  }
+  AV.Cloud.httpRequest({
+    url: constants.URL_JSAPI_TOKEN,
+    params :{
+      access_token : access_tokenval,
+      type : "jsapi"
+    },
+    success: function(httpResponse) {
+      //console.log(__filename,httpResponse.text);
+      var resObject = JSON.parse(httpResponse.text);
+      if(resObject.ticket){
+        cb(resObject.ticket);
+      }else{
+        if(resObject.errmsg){
+          console.error(resObject.errmsg);
+        }
+      }
+    },
+    error: function(httpResponse) {
+      console.error('Request failed with response code ' + httpResponse.status);
+    }
   });
 }
 

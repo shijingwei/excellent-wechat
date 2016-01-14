@@ -11,6 +11,7 @@ var MASTER_KEY = 'bi85xoq39g92v7y4mjuelm66hgmn6opjb50enwfknj39co5e'; // 你的 m
 AV.initialize(APP_ID, APP_KEY, MASTER_KEY);
 
 var token = require("cloud/weixin_interface/token.js");
+var product = require("cloud/pay/product.js");
 
 var xml2js = require('xml2js');
 var weixin = require('cloud/weixin.js');
@@ -153,9 +154,15 @@ app.post('/addAccount',account.addAccount);
 app.get('/wxmenu',function(req,res){ res.render('weixin/wxmenu');});
 app.post('/wxmenu',wxmenu.createMenu);
 
+//流量
+//app.get('/pay',product.product_req);
+app.get('/pay/productReq',product.product_req);
+app.get('/pay/product',product.product);
+app.post('/pay/product',product.product);
+
 //Test
 //刷新Token
-//app.get('/refresh',token.refreshTimer);
+app.get('/refresh',token.refreshTimer);
 //Message
 //app.get('/message',function(req,res){ var params = req.query; wxmessage.save(params);res.send('success');});
 
