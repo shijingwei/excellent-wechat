@@ -37,7 +37,7 @@ function save(params,appid,customer){
   }
   var count = 0;
   for (obj in params){
-    console.log(obj);
+    //console.log(obj);
     var val =  params[obj];
     //console.log(val);
     customer.set(obj,params[obj]);
