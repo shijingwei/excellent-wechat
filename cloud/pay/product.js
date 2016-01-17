@@ -59,14 +59,15 @@ function product(req,res){
 }
 
 function preorder(req,res){
-  var parameters = req.query;
+  var parameters = req.body;
+  console.log(__filename,"preorder",req.body);
   var app_id = parameters.appid;
   var openid_val = parameters.openid;
 
-  var bodyval = '4G流量';
+  var bodyval = '4G';
   var tradeno = 'data00001';
   var totalfee= 1;
-  var remoteip =req.headers['x-real-ip']?req.headers['x-real-ip']:req.ip;
+  var remoteip ="223.73.109.110";//req.headers['x-real-ip']?req.headers['x-real-ip']:req.ip;
   var notifyurl = req.protocol+'://'+req.hostname+req.originalUrl+"back";
   var tradetype ='JSAPI';
 
@@ -91,10 +92,10 @@ function preorder(req,res){
         out_trade_no:tradeno,
         spbill_create_ip:remoteip,
         notify_url:notifyurl,
-        tradet_ype:tradetype,
+        trade_type:tradetype,
         openid:openid_val
       };
-      var signatureval = weixin.signature(parameters);
+      var signatureval = weixin.signature(parameters,'sha1');
       parameters.sign = signatureval;
       //sign:signatureval,
 
@@ -104,6 +105,8 @@ function preorder(req,res){
           console.error(__filename,err);
           return;
         }
+        console.log(__filename,json);
+        /*
         var params = {
           appid : appidval,
           timestamp : timestampval,
@@ -113,6 +116,8 @@ function preorder(req,res){
         };
         console.log(__filename,params);
         res.render("pay/product",params);
+        */
+        res.json({message:'OK'});
       });
     }
   });
@@ -152,3 +157,4 @@ function producttest(req,res){
 }
 
 exports.product = producttest;
+exports.preorder = preorder;

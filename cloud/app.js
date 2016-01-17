@@ -159,6 +159,7 @@ app.post('/wxmenu',wxmenu.createMenu);
 //app.get('/pay/productReq',product.product_req);
 app.get('/pay/product',product.product);
 app.post('/pay/product',product.product);
+app.post('/pay/preorder',product.preorder);
 
 //Test
 //刷新Token
