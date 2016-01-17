@@ -72,7 +72,8 @@ function saveOrUpdateFrom(openid,app_id){
         params.openid= openid;
         params.access_token = access_token;
         params.app_id=app_id;
-        save(params,app_id,customer);
+        getUserInfo(params,customer,save);
+        //save(params,app_id,customer);
       });
     },
     error:function(err,customers){

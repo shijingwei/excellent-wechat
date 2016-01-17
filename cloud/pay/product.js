@@ -5,6 +5,7 @@ var crypto = require('crypto');
 var wxpage = require('cloud/weixin_interface/wx_page.js');
 var wxaccount = require('cloud/weixin_interface/account.js');
 var logfile = require('cloud/utils/logfile.js');
+var weixin = require('cloud/weixin.js');
 
 exports.product_req = function(req,res){
   console.log(__filename,req.query);
@@ -21,6 +22,7 @@ function product(req,res){
   //logfile.log(new Buffer(req.toString()));
   var codeval = req.query.code;
   var app_id = req.query.appid;
+  var uri = req.protocol+'://'+req.hostname+req.originalUrl;
 
   wxaccount.geWXAccountByAppId(app_id,function(accounts){
     if(accounts && accounts.length>0){
@@ -29,10 +31,14 @@ function product(req,res){
       var secretval = account.get('app_secret');
       var timestampval = account.updatedAt.getTime();
       var ticket = account.get('ticket');
-      var oriStr="jsapi_ticket="+ticket+"&noncestr="+appidval+"&timestamp="+timestampval+"&url="+uri;
-      var signatureval = crypto.createHash('sha1').update(oriStr).digest('hex');
+      var oriStr={"jsapi_ticket":ticket,"noncestr":appidval,"timestamp":timestampval,"url":uri};
+      var signatureval = weixin.signature(oriStr);
 
-      wxpage.get_access_token(appidval,secretval,codeval,function(opendidval){
+      wxpage.get_access_token(appidval,secretval,codeval,function(err,opendidval){
+        if(err){
+          console.error(__filename,err);
+          return;
+        }
         var params = {
           appid : appidval,
           timestamp : timestampval,
@@ -40,6 +46,7 @@ function product(req,res){
           signature : signatureval,
           opendid :  opendidval
         };
+        console.log(__filename,params);
         res.render("pay/product",params);
       });
     }
@@ -51,10 +58,10 @@ function product(req,res){
 function producttest(req,res){
   console.log(__filename,"producttest",req.query);
   //logfile.log(new Buffer(req.toString()));
-  var codeval = "testcode";
-  var opendidval = "openid";
+  var codeval = "0319a62788f17e8ed26d889129bd25bs";
+  var opendidval = "oyJY1t99YwHAGH1ABFe4yC25npOw";
   var app_id = req.query.appid;
-  var uri = req.protocol+'://'+req.hostname+req.originalUrl;
+  var uri = "http:excellent.leanapp.cn/pay/product";
 
   wxaccount.geWXAccountByAppId(app_id,function(accounts){
     if(accounts && accounts.length>0){
@@ -64,8 +71,8 @@ function producttest(req,res){
       var secretval = account.get('app_secret');
       var timestampval = account.updatedAt.getTime();
       var ticket = account.get('ticket');
-      var oriStr="jsapi_ticket="+ticket+"&noncestr="+appidval+"&timestamp="+timestampval+"&url="+uri;
-      var signatureval = crypto.createHash('sha1').update(oriStr).digest('hex');
+      var oriStr={"jsapi_ticket":ticket,"noncestr":appidval,"timestamp":timestampval,"url":uri};
+      var signatureval = weixin.signature(oriStr);
       var params = {
         appid : appidval,
         timestamp : timestampval,
@@ -73,7 +80,7 @@ function producttest(req,res){
         signature : signatureval,
         opendid :  opendidval
       };
-      //console.log(__filename,params);
+      console.log(__filename,params);
       res.render("pay/product",params);
     }
   });
@@ -81,4 +88,4 @@ function producttest(req,res){
   //res.render("pay/product",{});
 }
 
-exports.product = product ;
+exports.product = producttest;

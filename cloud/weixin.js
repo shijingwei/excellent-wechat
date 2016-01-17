@@ -2,6 +2,8 @@ var crypto = require('crypto');
 var config = require('cloud/config/weixin.js');
 var debug = require('debug')('AV:weixin');
 var wx_message = require('cloud/weixin_interface/wx_message.js');
+var CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
+var _ = require('underscore');
 
 exports.exec = function(params, cb) {
   if (params.signature) {
@@ -38,4 +40,40 @@ var receiveMessage = function(msg, cb) {
     }
   }
   cb(null, result);
+}
+
+//签名json
+exports.signature = function(jsons){
+  if(!jsons){
+    return;
+  }
+  var arr = new Array();
+  var count = 0;
+  for(o in  jsons){
+    count = arr.push(o);
+  }
+  if(!count){
+    return;
+  }
+  arr.sort();
+  var result = "";
+  for(i=0;i<count;i++){
+    if(i){
+      result +="&";
+    }
+    result += arr[i]+"="+jsons[arr[i]];
+  }
+  var code = crypto.createHash('sha1').update(result).digest('hex');
+  return code;
+}
+
+exports.noncestr = function(n) {
+  if (!n)
+  n = 10;
+  var str = '';
+  for(i=0;i<n;i++){
+    var c = _.random(0,82);
+    str += CHARS.charAt(c);
+  }
+  return str;
 }

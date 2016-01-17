@@ -165,6 +165,8 @@ app.post('/pay/product',product.product);
 app.get('/refresh',token.refreshTimer);
 //Message
 //app.get('/message',function(req,res){ var params = req.query; wxmessage.save(params);res.send('success');});
+//app.get('/signature',function(req,res){ var s= weixin.signature({a:'a',z:'z',g:'g',b:'b'});res.send(s); });
+//app.get('/noncestr',function(req,res){ var s= weixin.noncestr(32);res.send(s); });
 
 // 最后，必须有这行代码来使 express 响应 HTTP 请求
 app.listen();
