@@ -1,4 +1,5 @@
 var constants = require('cloud/weixin_interface/wx_constants.js');
+var xml2js = require('xml2js');
 /*
 function get_authorize(appidval,redirect_urival){
   var url = constants.URL_PAGE_AUTHORIZE+
@@ -34,5 +35,32 @@ function get_access_token(appidval,secretval,codeval,cb){
   }
   });
 }
+
+function get_unifiedorder(params,cb){
+  var builder = new xml2js.Builder();
+  var xml = builder.buildObject(params);
+
+  AV.Cloud.httpRequest({
+    method: 'POST',
+    url: constants.URL_UNIFIEDORDER,
+    headers: {
+      'Content-Type': 'application/xml'
+    },
+    body:xml,
+    success: function(httpResponse) {
+      xml2js.parseString(buf, function(err, json) {
+        if (err) {
+          console.error(err);
+        } else {
+          cb(null,json);
+        }
+      });
+    },
+    error: function(httpResponse) {
+      console.error('Request failed with response code ' + httpResponse.status);
+    }
+  });
+}
 exports.get_access_token = get_access_token;
+exports.get_unifiedorder = get_unifiedorder;
 //exports.get_authorize = get_authorize;

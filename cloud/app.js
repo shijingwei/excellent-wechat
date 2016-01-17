@@ -156,7 +156,7 @@ app.post('/wxmenu',wxmenu.createMenu);
 
 //流量
 //app.get('/pay',product.product_req);
-app.get('/pay/productReq',product.product_req);
+//app.get('/pay/productReq',product.product_req);
 app.get('/pay/product',product.product);
 app.post('/pay/product',product.product);
 

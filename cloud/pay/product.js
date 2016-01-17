@@ -6,7 +6,9 @@ var wxpage = require('cloud/weixin_interface/wx_page.js');
 var wxaccount = require('cloud/weixin_interface/account.js');
 var logfile = require('cloud/utils/logfile.js');
 var weixin = require('cloud/weixin.js');
+var constants = require('cloud/weixin_interface/wx_constants.js');
 
+/*
 exports.product_req = function(req,res){
   console.log(__filename,req.query);
   var app_id = req.query.appid;
@@ -15,6 +17,7 @@ exports.product_req = function(req,res){
   var redirect = wxpage.get_authorize(app_id,redirect_uri);
   res.redirect(redirect);
 }
+*/
 
 //redirect_uri/?code=CODE&state=STATE
 function product(req,res){
@@ -55,6 +58,66 @@ function product(req,res){
   //res.render("pay/product",{});
 }
 
+function preorder(req,res){
+  var parameters = req.query;
+  var app_id = parameters.appid;
+  var openid_val = parameters.openid;
+
+  var bodyval = '4G流量';
+  var tradeno = 'data00001';
+  var totalfee= 1;
+  var remoteip =req.headers['x-real-ip']?req.headers['x-real-ip']:req.ip;
+  var notifyurl = req.protocol+'://'+req.hostname+req.originalUrl+"back";
+  var tradetype ='JSAPI';
+
+  wxaccount.geWXAccountByAppId(app_id,function(accounts){
+    if(accounts && accounts.length>0){
+      var account = accounts[0];
+      var appidval = account.get('app_id');
+      var mchidval = account.get('mch_id');
+      var secretval = account.get('app_secret');
+      var timestampval = account.updatedAt.getTime();
+      var ticket = account.get('ticket');
+      var noncestr = weixin.noncestr(16);
+      //var oriStr={"jsapi_ticket":ticket,"noncestr":appidval,"timestamp":timestampval,"url":uri};
+
+
+      var parameters = {
+        appid:appidval,
+        mch_id:mchidval,
+        nonce_str:noncestr,
+        total_fee:totalfee,
+        body:bodyval,
+        out_trade_no:tradeno,
+        spbill_create_ip:remoteip,
+        notify_url:notifyurl,
+        tradet_ype:tradetype,
+        openid:openid_val
+      };
+      var signatureval = weixin.signature(parameters);
+      parameters.sign = signatureval;
+      //sign:signatureval,
+
+
+      wxpage.get_unifiedorder(parameters,function(err,json){
+        if(err){
+          console.error(__filename,err);
+          return;
+        }
+        var params = {
+          appid : appidval,
+          timestamp : timestampval,
+          nonceStr : appidval,
+          signature : signatureval,
+          opendid :  opendidval
+        };
+        console.log(__filename,params);
+        res.render("pay/product",params);
+      });
+    }
+  });
+}
+
 function producttest(req,res){
   console.log(__filename,"producttest",req.query);
   //logfile.log(new Buffer(req.toString()));
@@ -78,7 +141,7 @@ function producttest(req,res){
         timestamp : timestampval,
         nonceStr : appidval,
         signature : signatureval,
-        opendid :  opendidval
+        openid :  opendidval
       };
       console.log(__filename,params);
       res.render("pay/product",params);
