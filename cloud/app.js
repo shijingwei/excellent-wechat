@@ -5,9 +5,9 @@ var methodOverride = require('method-override');
 //var appconfig = require('cloud/config/application.js');
 
 var AV = require('leanengine');
-var APP_ID =  'gc7kzpln5airnv3c8wt4bof1kwxyifojctfy5yz28luykpji'; // 你的 app id
-var APP_KEY = '5yau1c8h4q4es3t5ibrxmz9tpjdllf1gekdrosz1blwb6kyn'; // 你的 app key
-var MASTER_KEY = 'bi85xoq39g92v7y4mjuelm66hgmn6opjb50enwfknj39co5e'; // 你的 master key
+var APP_ID =  'fUjCIy4ivUveYKWuWtiznLIe-gzGzoHsz'; // 你的 app id
+var APP_KEY = 'LvWvxjKqqOQeyQGlXwNGmwPP'; // 你的 app key
+var MASTER_KEY = 'NhQyKhPQaSQ3xwDtV2OEl2bu'; // 你的 master key
 AV.initialize(APP_ID, APP_KEY, MASTER_KEY);
 
 var token = require("cloud/weixin_interface/token.js");
@@ -118,7 +118,7 @@ app.get('/weixin/:appid', function(req, res) {
   //console.log('weixin req.originalUrl:',req.originalUrl);
   //console.log('weixin req:', req.query);
   var params = req.query;
-  params.appid = req.params.appid;
+  params.path = req.params.appid;
   weixin.exec(params, function(err, data) {
     if (err) {
       return res.send(err.code || 500, err.message);
@@ -131,7 +131,7 @@ app.post('/weixin/:appid', function(req, res) {
   //console.log('weixin req.originalUrl:',req.originalUrl);
   //console.log('weixin req:', req.body);
   var params = req.body;
-  params.appid = req.params.appid;
+  params.path = req.params.appid;
   weixin.exec(params, function(err, data) {
     if (err) {
       return res.send(err.code || 500, err.message);

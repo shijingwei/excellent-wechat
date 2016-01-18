@@ -7,7 +7,7 @@ var _ = require('underscore');
 
 exports.exec = function(params, cb) {
   if (params.signature) {
-    checkSignature(params.appid,params.signature, params.timestamp, params.nonce, params.echostr, cb);
+    checkSignature(params.signature, params.timestamp, params.nonce, params.echostr, cb);
   } else {
     receiveMessage(params, cb)
   }
@@ -15,7 +15,7 @@ exports.exec = function(params, cb) {
 
 // 验证签名
 var checkSignature = function(appid,signature, timestamp, nonce, echostr, cb) {
-  var oriStr = [appid, timestamp, nonce].sort().join('')
+  var oriStr = [config.token, timestamp, nonce].sort().join('')
   var code = crypto.createHash('sha1').update(oriStr).digest('hex');
   debug('code:', code)
   if (code == signature) {
