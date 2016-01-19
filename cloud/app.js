@@ -160,6 +160,7 @@ app.post('/wxmenu',wxmenu.createMenu);
 app.get('/pay/product',product.product);
 app.post('/pay/product',product.product);
 app.post('/pay/preorder',product.preorder);
+app.post('/pay/preorderback',product.preorderback);
 
 //Test
 //刷新Token

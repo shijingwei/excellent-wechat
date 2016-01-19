@@ -7,6 +7,7 @@ var wxaccount = require('cloud/weixin_interface/account.js');
 var logfile = require('cloud/utils/logfile.js');
 var weixin = require('cloud/weixin.js');
 var constants = require('cloud/weixin_interface/wx_constants.js');
+var _ = require('underscore');
 
 /*
 exports.product_req = function(req,res){
@@ -49,13 +50,18 @@ function product(req,res){
           signature : signatureval,
           opendid :  opendidval
         };
-        console.log(__filename,params);
+        console.log(__filename,'product',params);
         res.render("pay/product",params);
       });
     }
   });
 
   //res.render("pay/product",{});
+}
+
+exports.preorderback = function(req,res){
+  console.log(__filename,'preorderback',req.body);
+  console.log(__filename,'preorderback',req.query);
 }
 
 function preorder(req,res){
@@ -65,9 +71,9 @@ function preorder(req,res){
   var openid_val = parameters.openid;
 
   var bodyval = '4G';
-  var tradeno = 'data00001';
+  var tradeno = 'data'+_.random(0,10000);
   var totalfee= 1;
-  var remoteip ="223.73.109.110";//req.headers['x-real-ip']?req.headers['x-real-ip']:req.ip;
+  var remoteip =req.headers['x-real-ip']?req.headers['x-real-ip']:req.ip;
   var notifyurl = req.protocol+'://'+req.hostname+req.originalUrl+"back";
   var tradetype ='JSAPI';
 
@@ -107,15 +113,15 @@ function preorder(req,res){
         console.log(__filename,'get_unifiedorder',json);
 
         var params = {
-          appid : appidval,
+          appId : appidval,
           timeStamp : timestampval,
           nonceStr : noncestr,
-          package: json.prepay_id[0],
+          package: 'prepay_id='+json.prepay_id[0],
           signType : 'MD5'
         };
         signatureval = weixin.signature(params,'md5','yisharing2016yisharing2016ys2016');
         params.paySign = signatureval.toUpperCase();
-        console.log(__filename,params);
+        console.log(__filename,'request weixin pay',params);
         res.json(params);
       });
     }
@@ -147,7 +153,7 @@ function producttest(req,res){
         signature : signatureval,
         openid :  opendidval
       };
-      console.log(__filename,params);
+      console.log(__filename,'producttest',params);
       res.render("pay/product",params);
     }
   });
