@@ -27,7 +27,10 @@
 </div>
 </body>
 <script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<!--
 <script src="/zepto/1.0rc1/zepto.min.js"></script>
+-->
+<script src="/jquery/2.1.4/jquery.min.js"></script>
 <script>
   /*
    * 注意：
@@ -58,24 +61,14 @@
 
   wx.ready(function () {
     document.querySelector('#createOrder').onclick = function (){
-      $.ajax({
-        type: 'POST',
-        url: 'preorder',
-        data: { appid: '<%=appid %>',openid:'<%=openid %>',order:'1' },
-        dataType: 'json',
-        timeout: 300,
-        context: $('body'),
-        success: function(data){
-          $('#timestamp').val(data.timestamp);
+      $.post('preorder',{appid: '<%=appid %>',openid:'<%=openid %>',order:'1' },
+        function(data){
+          $('#timestamp').val(data.timeStamp);
           $('#nonceStr').val(data.nonceStr);
           $('#package').val(data.package);
           $('#signType').val(data.signType);
           $('#paySign').val(data.paySign);
-        },
-        error: function(xhr, type){
-          alert('Ajax error! '+type);
-        }
-      });
+        },'json');
     }
 
     document.querySelector('#checkJsApi').onclick = function () {
@@ -91,6 +84,7 @@
     };
 
     document.querySelector('#chooseWXPay').onclick = function () {
+      /*
       wx.chooseWXPay({
         timestamp: 1414723227,
         nonceStr: 'noncestr',
@@ -98,7 +92,22 @@
         signType: 'SHA1', // 注意：新版支付接口使用 MD5 加密
         paySign: 'bd5b1933cda6e9548862944836a9b52e8c9a2b69'
       });
+      */
+      WeixinJSBridge.invoke(
+       'getBrandWCPayRequest', {
+           "appId":"<%=appid %>",     //公众号名称，由商户传入
+           "timeStamp": $('#timestamp').val(),         //时间戳，自1970年以来的秒数
+           "nonceStr": $('#nonceStr').val(), //随机串
+           "package": $('#package').val(),
+           "signType":$('#signType').val(),         //微信签名方式：
+           "paySign":$('#paySign').val() //微信签名
+       },
+       function(res){
+           if(res.err_msg == "get_brand_wcpay_request：ok" ) {}     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
+       }
+   );
     };
+
   });
 
   // 10 微信支付接口

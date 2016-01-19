@@ -18,10 +18,10 @@ function get_access_token(appidval,secretval,codeval,cb){
     code : codeval
   },
   success: function(httpResponse) {
-    console.log(__filename,httpResponse.text);
+    console.log(__filename,'get_access_token',httpResponse.text);
     var resObject = JSON.parse(httpResponse.text);
     if(resObject.openid){
-      cb(null,resObject.openid);
+      cb(null,resObject);
     }else{
       if(resObject.errmsg){
         console.error(__filename,resObject.errcode,resObject.errmsg);
@@ -55,7 +55,7 @@ function get_unifiedorder(params,cb){
         if (err) {
           console.error(err);
         } else {
-          cb(null,json);
+          cb(null,json.xml);
         }
       });
     },

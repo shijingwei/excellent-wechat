@@ -95,29 +95,28 @@ function preorder(req,res){
         trade_type:tradetype,
         openid:openid_val
       };
-      var signatureval = weixin.signature(parameters,'sha1');
-      parameters.sign = signatureval;
+      var signatureval = weixin.signature(parameters,'md5','yisharing2016yisharing2016ys2016');
+      parameters.sign = signatureval.toUpperCase();
       //sign:signatureval,
-
 
       wxpage.get_unifiedorder(parameters,function(err,json){
         if(err){
           console.error(__filename,err);
           return;
         }
-        console.log(__filename,json);
-        /*
+        console.log(__filename,'get_unifiedorder',json);
+
         var params = {
           appid : appidval,
-          timestamp : timestampval,
-          nonceStr : appidval,
-          signature : signatureval,
-          opendid :  opendidval
+          timeStamp : timestampval,
+          nonceStr : noncestr,
+          package: json.prepay_id[0],
+          signType : 'MD5'
         };
+        signatureval = weixin.signature(params,'md5','yisharing2016yisharing2016ys2016');
+        params.paySign = signatureval.toUpperCase();
         console.log(__filename,params);
-        res.render("pay/product",params);
-        */
-        res.json({message:'OK'});
+        res.json(params);
       });
     }
   });

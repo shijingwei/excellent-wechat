@@ -43,7 +43,7 @@ var receiveMessage = function(msg, cb) {
 }
 
 //签名json
-exports.signature = function(jsons,type){
+exports.signature = function(jsons,type,key){
   if(!jsons){
     return;
   }
@@ -65,6 +65,9 @@ exports.signature = function(jsons,type){
       result +="&";
     }
     result += arr[i]+"="+jsons[arr[i]];
+  }
+  if(key){
+    result = result+'&key='+key;
   }
   var code = crypto.createHash(type).update(result).digest('hex');
   return code;
