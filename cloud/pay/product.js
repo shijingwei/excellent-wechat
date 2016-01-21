@@ -20,7 +20,8 @@ exports.product_req = function(req,res){
 }
 */
 
-//redirect_uri/?code=CODE&state=STATE
+//请求菜单URL网页授权后调用 （运行在服务器端）
+//redirect_uri/？appid＝appid&code=CODE&state=STATE
 function product(req,res){
   console.log(__filename,"product",req.query);
   //logfile.log(new Buffer(req.toString()));
@@ -36,9 +37,10 @@ function product(req,res){
       var timestampval = account.updatedAt.getTime();
       var ticket = account.get('ticket');
       var oriStr={"jsapi_ticket":ticket,"noncestr":appidval,"timestamp":timestampval,"url":uri};
-      var signatureval = weixin.signature(oriStr);
+      var signatureval = weixin.signature(oriStr); //加载页面的js签名
 
-      wxpage.get_access_token(appidval,secretval,codeval,function(err,opendidval){
+      console.log(__filename,"product invoke get_access_token",appidval,secretval,codeval);
+      wxpage.get_access_token(appidval,secretval,codeval,function(err,json){
         if(err){
           console.error(__filename,err);
           return;
@@ -48,7 +50,7 @@ function product(req,res){
           timestamp : timestampval,
           nonceStr : appidval,
           signature : signatureval,
-          opendid :  opendidval
+          openid :  json.openid
         };
         console.log(__filename,'product',params);
         res.render("pay/product",params);
@@ -59,12 +61,15 @@ function product(req,res){
   //res.render("pay/product",{});
 }
 
+//（预防订单回调 可以不参考）
 exports.preorderback = function(req,res){
   console.log(__filename,'preorderback',req.body);
   console.log(__filename,'preorderback',req.query);
 }
 
+//预付订单
 function preorder(req,res){
+  //ajax上来的参数
   var parameters = req.body;
   console.log(__filename,"preorder",req.body);
   var app_id = parameters.appid;
@@ -77,6 +82,7 @@ function preorder(req,res){
   var notifyurl = req.protocol+'://'+req.hostname+req.originalUrl+"back";
   var tradetype ='JSAPI';
 
+  //从数据库中查询当前微信号
   wxaccount.geWXAccountByAppId(app_id,function(accounts){
     if(accounts && accounts.length>0){
       var account = accounts[0];
@@ -89,6 +95,7 @@ function preorder(req,res){
       //var oriStr={"jsapi_ticket":ticket,"noncestr":appidval,"timestamp":timestampval,"url":uri};
 
 
+      //为调用微信统一订单 参数
       var parameters = {
         appid:appidval,
         mch_id:mchidval,
@@ -101,10 +108,12 @@ function preorder(req,res){
         trade_type:tradetype,
         openid:openid_val
       };
+      //为调用微信统一订单 增加签名参数
       var signatureval = weixin.signature(parameters,'md5','yisharing2016yisharing2016ys2016');
       parameters.sign = signatureval.toUpperCase();
       //sign:signatureval,
 
+      //调用微信统一订单接口
       wxpage.get_unifiedorder(parameters,function(err,json){
         if(err){
           console.error(__filename,err);
@@ -112,6 +121,7 @@ function preorder(req,res){
         }
         console.log(__filename,'get_unifiedorder',json);
 
+        //微信服务器统一订单返回的参数
         var params = {
           appId : appidval,
           timeStamp : timestampval,
@@ -119,6 +129,8 @@ function preorder(req,res){
           package: 'prepay_id='+json.prepay_id[0],
           signType : 'MD5'
         };
+
+        //增加签名并返回给页面
         signatureval = weixin.signature(params,'md5','yisharing2016yisharing2016ys2016');
         params.paySign = signatureval.toUpperCase();
         console.log(__filename,'request weixin pay',params);
@@ -128,6 +140,7 @@ function preorder(req,res){
   });
 }
 
+//测试的代码
 function producttest(req,res){
   console.log(__filename,"producttest",req.query);
   //logfile.log(new Buffer(req.toString()));
@@ -161,5 +174,5 @@ function producttest(req,res){
   //res.render("pay/product",{});
 }
 
-exports.product = producttest;
+exports.product = product;
 exports.preorder = preorder;

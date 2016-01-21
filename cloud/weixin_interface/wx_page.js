@@ -9,6 +9,7 @@ function get_authorize(appidval,redirect_urival){
 */
 
 function get_access_token(appidval,secretval,codeval,cb){
+  //console.log(__filename,'get_access_token',params);
   AV.Cloud.httpRequest({
   url: constants.URL_PAGE_ACCESS_TOKEN,
   params :{
